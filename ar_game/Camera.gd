@@ -24,21 +24,21 @@ func checkInput():
 		if Input.is_action_pressed("turn_left"):
 			set_rotation_deg(Vector3(0,get_rotation_deg().y - 1, 0))
 			if not pressed.left.up:
-				httpInputRequest.request("http://localhost:5000/pressed?dir=up&side=left")
+				httpInputRequest.request("http://192.168.254.14:5000/pressed?dir=up&side=left")
 			pressed.left.up = true
 		else:
 			if pressed.left.up:
-				httpInputRequest.request("http://localhost:5000/released?dir=up&side=left")
+				httpInputRequest.request("http://192.168.254.14:5000/released?dir=up&side=left")
 			pressed.left.up = false
 			
 		if Input.is_action_pressed("turn_right"):
 			set_rotation_deg(Vector3(0,get_rotation_deg().y +1, 0))
 			if not pressed.right.up:
-				httpInputRequest.request("http://localhost:5000/pressed?dir=up&side=right")
+				httpInputRequest.request("http://192.168.254.14:5000/pressed?dir=up&side=right")
 			pressed.right.up = true
 		else:
 			if pressed.right.up:
-				httpInputRequest.request("http://localhost:5000/released?dir=up&side=right")
+				httpInputRequest.request("http://192.168.254.14:5000/released?dir=up&side=right")
 			pressed.right.up = false
 
 func _process(delta):
@@ -52,7 +52,7 @@ func _process(delta):
 
 func get_image():
 	httpImage.set_download_file('user://tmp'+str(on)+'.jpg')
-	httpImage.request("http://localhost:5000/outline.jpg")
+	httpImage.request("http://192.168.254.14:5000/image.jpg")
 
 func image_downloaded(result,response_code,headers,body):
 	if result == OK:
