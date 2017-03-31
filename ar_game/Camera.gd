@@ -22,7 +22,7 @@ func _process(delta):
 
 func get_image():
 	http.set_download_file('user://tmp'+str(on)+'.jpg')
-	http.request("http://localhost:5000/image.jpg")
+	http.request("http://localhost:5000/outline.jpg")
 
 func image_downloaded(result,response_code,headers,body):
 	if result == OK:

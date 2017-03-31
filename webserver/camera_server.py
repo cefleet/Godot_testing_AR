@@ -2,13 +2,31 @@ import cv2
 import Image
 from StringIO import StringIO
 from flask import Flask,send_file, make_response
-import time
 import threading
+import numpy as np
+import time
+from flask import jsonify
 app = Flask(__name__)
 
 capture = None
 captureThread = None
 image = None
+
+def auto_canny(img, sigma=0.33):
+    # compute the median of the single channel pixel intensities
+    v = np.median(img)
+    # apply automatic Canny edge detection using the computed median
+    lower = int(max(0, (1.0 - sigma) * v))
+    upper = int(min(255, (1.0 + sigma) * v))
+    edged = cv2.Canny(image, lower, upper)
+    return edged
+
+def detect(img):
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    blurred = cv2.GaussianBlur(gray, (3, 3), 0)
+    edges = auto_canny(blurred)
+    return edges
 
 def serve_image():
     global image
@@ -18,8 +36,28 @@ def serve_image():
     njpg.save(img_io, 'JPEG', quality=50)
     img_io.seek(0)
     response=make_response(send_file(img_io,mimetype='image/jpeg'))
+
     response.headers['Content-Length'] = img_io.len
     return response
+
+def serve_outline_data():
+    global image
+    imgRGB = detect(image)
+    return jsonify(imgRGB.tolist())
+
+
+def serve_outline_image():
+    global image
+    img_io = StringIO()
+    imgRGB=detect(image)
+
+    njpg = Image.fromarray(imgRGB)
+    njpg.save(img_io, 'JPEG', quality=50)
+    img_io.seek(0)
+    response=make_response(send_file(img_io,mimetype='image/jpeg'))
+    response.headers['Content-Length'] = img_io.len
+    return response
+
 
 def loopingCamera():
     global capture
@@ -30,7 +68,11 @@ def loopingCamera():
         time.sleep(0.05)
 
 
+
 app.add_url_rule('/image.jpg','image',serve_image)
+app.add_url_rule('/outline.jpg','outline',serve_outline_image)
+app.add_url_rule('/data.json','data',serve_outline_data)
+
 if __name__ == '__main__':
     global capture
     global captureThread
@@ -40,4 +82,4 @@ if __name__ == '__main__':
         captureThread.start()
         app.run()
     except KeyboardInterrupt:
-		captureThread.stop()
+        captureThread.stop()
