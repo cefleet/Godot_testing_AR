@@ -162,7 +162,7 @@ quad/size = Vector2( 1.5, 1 )
 quad/offset = Vector2( 0, 0 )
 quad/centered = true
 
-[node name="HTTPRequest" type="HTTPRequest" parent="Camera"]
+[node name="httpImageRequest" type="HTTPRequest" parent="Camera"]
 
 use_threads = false
 body_size_limit = -1
@@ -191,6 +191,12 @@ shadow/mode = 0
 shadow/max_distance = 0.0
 shadow/split_weight = 0.5
 shadow/zoffset_scale = 2.0
+
+[node name="httpInputRequest" type="HTTPRequest" parent="Camera"]
+
+use_threads = false
+body_size_limit = -1
+max_redirects = 8
 
 [node name="Enemy1" type="TestCube" parent="."]
 

@@ -1,11 +1,10 @@
 import cv2
 import Image
 from StringIO import StringIO
-from flask import Flask,send_file, make_response
+from flask import Flask,send_file, request, make_response, jsonify
 import threading
 import numpy as np
 import time
-from flask import jsonify
 app = Flask(__name__)
 
 capture = None
@@ -68,6 +67,32 @@ def loopingCamera():
         time.sleep(0.05)
 
 
+@app.route('/pressed')
+def pressed():
+    direct = request.args.get('dir')
+    side = request.args.get('side')
+    print(direct)
+    print(side)
+
+    #if direct == 'up':
+    #    motors[side].forward()
+    #elif direct == 'down':
+    #    motors[side].backward()
+
+    return 'pressed'
+
+
+
+@app.route('/released')
+def released():
+    direct = request.args.get('dir')
+    side = request.args.get('side')
+    print(direct)
+    print(side)
+
+    #motors[side].stop()
+    return 'released'
+
 
 app.add_url_rule('/image.jpg','image',serve_image)
 app.add_url_rule('/outline.jpg','outline',serve_outline_image)
@@ -80,6 +105,6 @@ if __name__ == '__main__':
         capture = cv2.VideoCapture(0)
         captureThread = threading.Thread(target=loopingCamera, args=())
         captureThread.start()
-        app.run()
+        app.run(host='0.0.0.0')
     except KeyboardInterrupt:
         captureThread.stop()
