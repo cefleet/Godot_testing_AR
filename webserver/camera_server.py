@@ -64,7 +64,7 @@ def loopingCamera():
     while True:
         rc,img = capture.read()
         image = img
-        time.sleep(0.05)
+        time.sleep(0.3)
 
 
 @app.route('/pressed')
